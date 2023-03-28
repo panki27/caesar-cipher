@@ -76,8 +76,9 @@ static void text_input_callback(void* ctx) {
 
 static bool back_event_callback(void* ctx) {
   furi_assert(ctx);
-   const CaesarState* caesar_state = ctx;
-  furi_mutex_acquire(caesar_state->mutex, FuriWaitForever);
+  const CaesarState* caesar_state = ctx;
+   furi_mutex_acquire(caesar_state->mutex, FuriWaitForever);
+
   view_dispatcher_stop(caesar_state->view_dispatcher);
   furi_mutex_release(caesar_state->mutex);
   return true;
@@ -99,16 +100,16 @@ static void caesar_cipher_state_free(CaesarState* const caesar_state) {
   free(caesar_state);
 }
 
-int32_t caesar_cipher_app() {
-
+int32_t caesar_cipher_app(void* p) {
+  UNUSED(p);
   CaesarState* caesar_state = malloc(sizeof(CaesarState));
   
   FURI_LOG_D("caesar_cipher", "Running caesar_cipher_state_init");
   caesar_cipher_state_init(caesar_state);
 
   caesar_state->mutex = furi_mutex_alloc(FuriMutexTypeNormal);
-
-    if(!caesar_state->mutex) {
+  
+  if(!caesar_state->mutex) {
     FURI_LOG_E("caesar_cipher", "cannot create mutex\r\n");
     free(caesar_state);
     return 255;
@@ -145,7 +146,7 @@ int32_t caesar_cipher_app() {
   view_dispatcher_run(caesar_state->view_dispatcher);
 
   furi_record_close("gui");
-  furi_mutex_free(caesar_state);
+  furi_mutex_free(caesar_state->mutex);
   caesar_cipher_state_free(caesar_state);
 
   return 0;
