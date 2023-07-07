@@ -168,4 +168,8 @@ int32_t sentry_safe_app(void* p) {
     free(sentry_state);
 
     return 0;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ea823c346728678eb2ab7d8784fca34b1b2d6c5b
